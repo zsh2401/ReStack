@@ -1,0 +1,52 @@
+#!/bin/bash
+set -e
+
+DEST_DIR="$1"
+if [ -z "$DEST_DIR" ]; then
+    echo "用法: setup <目标目录>"
+    echo "示例: setup ~/.claude/skills/"
+    exit 1
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SKILLS_SRC="$SCRIPT_DIR/skills"
+TIMESTAMP=$(date -Iseconds)
+
+if [ ! -d "$SKILLS_SRC" ]; then
+    echo "错误: 找不到 skills/ 目录 (在 $SCRIPT_DIR)"
+    exit 1
+fi
+
+TEMP_DIR=$(mktemp -d)
+trap "rm -rf $TEMP_DIR" EXIT
+
+echo "→ 复制技能到临时目录..."
+cp -r "$SKILLS_SRC"/* "$TEMP_DIR"/
+
+count=0
+echo "→ 注入更新检查..."
+for skill_md in "$TEMP_DIR"/*/SKILL.md; do
+    [ -f "$skill_md" ] || continue
+    skill_name=$(basename "$(dirname "$skill_md")")
+
+    awk -v ts="$TIMESTAMP" -v name="$skill_name" '
+    /^---$/ {
+        count++
+        print
+        if (count == 2) {
+            printf "\n<!-- ↑ ReStack | %s | 更新 `restack-update` | https://github.com/zsh2401/ReStack -->\n", ts
+        }
+        next
+    }
+    { print }
+    ' "$skill_md" > "$skill_md.tmp" && mv "$skill_md.tmp" "$skill_md"
+
+    echo "   ✓ $skill_name"
+    count=$((count + 1))
+done
+
+echo "→ 安装到 $DEST_DIR ..."
+mkdir -p "$DEST_DIR"
+cp -r "$TEMP_DIR"/* "$DEST_DIR"/
+
+echo "✓ 完成! 已安装 $count 个技能到 $DEST_DIR"
