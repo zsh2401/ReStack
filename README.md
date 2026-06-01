@@ -9,10 +9,11 @@ ReStack is built for scientists, PhD students, and anyone doing rigorous literat
 ## Quick start
 
 1. Install ReStack (30 seconds — see below)
-2. Type `/research` with any academic search query
-3. Type `/latex-template` to find a conference/journal template
-4. Type `/docify` to save your session to structured docs
-5. Stop there. You'll know if this is for you.
+2. Type `/new-paper` to start a new paper project
+3. Type `/research` with any academic search query
+4. Type `/latex-template` to find a conference/journal template
+5. Type `/docify` to save your session to structured docs
+6. Stop there. You'll know if this is for you.
 
 ## Install — 30 seconds
 
@@ -22,11 +23,11 @@ ReStack is built for scientists, PhD students, and anyone doing rigorous literat
 
 Open Claude Code and paste this. Claude does the rest.
 
-> Install ReStack: run **`git clone --single-branch --depth 1 https://github.com/zsh2401/ReStack.git ~/.claude/skills/restack && cd ~/.claude/skills/restack && ./setup ~/.claude/skills`** then add a "ReStack" section to CLAUDE.md that says available skills: /research, /latex-template, /docify, /peer-review. Then ask the user if they also want to add ReStack to the current project so teammates get it.
+> Install ReStack: run **`git clone --single-branch --depth 1 https://github.com/zsh2401/ReStack.git ~/.claude/skills/restack && cd ~/.claude/skills/restack && ./setup ~/.claude/skills`** then add a "ReStack" section to CLAUDE.md that says available skills: /new-research, /new-paper, /research, /latex-template, /docify, /peer-review. Then ask the user if they also want to add ReStack to the current project so teammates get it.
 
 ### Step 2: Add to your repo so teammates get it (optional)
 
-> Add ReStack to this project: run **`cp -Rf ~/.claude/skills/restack .claude/skills/restack && rm -rf .claude/skills/restack/.git && cd .claude/skills/restack && ./setup .claude/skills`** then add a "ReStack" section to this project's CLAUDE.md that says available skills: /research, /latex-template, /docify, /peer-review, and tells Claude that if ReStack skills aren't working, run `cd .claude/skills/restack && ./setup .claude/skills` to reinstall.
+> Add ReStack to this project: run **`cp -Rf ~/.claude/skills/restack .claude/skills/restack && rm -rf .claude/skills/restack/.git && cd .claude/skills/restack && ./setup .claude/skills`** then add a "ReStack" section to this project's CLAUDE.md that says available skills: /new-research, /new-paper, /research, /latex-template, /docify, /peer-review, and tells Claude that if ReStack skills aren't working, run `cd .claude/skills/restack && ./setup .claude/skills` to reinstall.
 
 Real files get committed to your repo (not a submodule), so `git clone` just works. Everything lives inside `.claude/`. Nothing touches your PATH or runs in the background.
 
@@ -78,6 +79,8 @@ ReStack 专注于科研工作的完整链路：搜索 → 模板 → 写作 → 
 
 | Skill | Your specialist | What they do |
 |-------|----------------|--------------|
+| `/new-research` | **Project Initializer** | 初始化研究项目。询问主题、类型和所需技能，写入 CLAUDE.md/AGENTS.md，创建动态 RESEARCH.md（研究目标、论文结构、工作进度）。 |
+| `/new-paper` | **Paper Scaffolder** | 新建论文项目。询问模板偏好（搜索期刊模板 或 默认模板），创建 `papers/<slug>/` 目录结构（sections/figures/tables/refs.bib），更新 RESEARCH.md 的论文结构和进度。 |
 | `/research` | **Literature Search** | 多源学术搜索。先分类再检索：文献类走 OpenAlex → Semantic Scholar → Tavily → Brave；技术文档类走 Tavily → Brave。Query rewrite、去重、rerank、来源校验。六份数据源参考文档。 |
 | `/latex-template` | **Template Finder** | LaTeX/Overleaf 模板检索。优先搜索官方源（出版社/CTAN/GitHub），避免过期第三方模板。支持期刊、会议、学校论文模板。 |
 | `/docify` | **Research Archivist** | 会话归档。将当前研究成果保存到 `docs/YYYY-MM-DD-<title>/index.md`，支持附件和引用清单。 |

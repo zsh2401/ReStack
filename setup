@@ -10,7 +10,14 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILLS_SRC="$SCRIPT_DIR/skills"
+VERSION_FILE="$SCRIPT_DIR/version"
 TIMESTAMP=$(date -Iseconds)
+
+if [ -f "$VERSION_FILE" ]; then
+    VERSION=$(head -n1 "$VERSION_FILE" | tr -d '[:space:]')
+else
+    VERSION="unknown"
+fi
 
 if [ ! -d "$SKILLS_SRC" ]; then
     echo "错误: 找不到 skills/ 目录 (在 $SCRIPT_DIR)"
@@ -20,6 +27,7 @@ fi
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
 
+echo "ReStack v$VERSION"
 echo "→ 复制技能到临时目录..."
 cp -r "$SKILLS_SRC"/* "$TEMP_DIR"/
 
@@ -29,12 +37,12 @@ for skill_md in "$TEMP_DIR"/*/SKILL.md; do
     [ -f "$skill_md" ] || continue
     skill_name=$(basename "$(dirname "$skill_md")")
 
-    awk -v ts="$TIMESTAMP" -v name="$skill_name" '
+    awk -v ts="$TIMESTAMP" -v ver="$VERSION" -v name="$skill_name" '
     /^---$/ {
         count++
         print
         if (count == 2) {
-            printf "\n<!-- ↑ ReStack | %s | 更新 `restack-update` | https://github.com/zsh2401/ReStack -->\n", ts
+            printf "\n# Preamble (run first)\n\n安装自 ReStack v%s | %s\n检查更新: `restack-update` | 来源: https://github.com/zsh2401/ReStack\n如果已安装版本与上游不一致，提醒用户升级。\n", ver, ts
         }
         next
     }
